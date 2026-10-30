@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 340" fill="none">
+  <defs>
+    <linearGradient id="arrow" x1="164" y1="248" x2="301" y2="92" gradientUnits="userSpaceOnUse"><stop stop-color="#1d6549"/><stop offset="1" stop-color="#397d56"/></linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#d7dfce"/></pattern>
+  </defs>
+  <rect x="20" y="10" width="400" height="320" rx="24" fill="url(#dots)"/>
+  <ellipse cx="221" cy="172" rx="162" ry="64" transform="rotate(-28 221 172)" stroke="#c2d1ba"/>
+  <ellipse cx="221" cy="172" rx="125" ry="116" transform="rotate(-28 221 172)" stroke="#d5ddcd"/>
+  <circle cx="221" cy="172" r="69" fill="#e4ebdc" stroke="#c7d4be"/>
+  <path d="m142 224 83-83h-54v-38h118v118h-38v-54l-82 83z" fill="#d1ddc6" transform="translate(6 10)"/>
+  <path d="m142 224 83-83h-54v-38h118v118h-38v-54l-82 83z" fill="url(#arrow)"/>
+  <circle cx="77" cy="226" r="9" fill="#f8faf5" stroke="#7d9b6f" stroke-width="2"/>
+  <circle cx="349" cy="87" r="6" fill="#b6c867"/>
+  <circle cx="277" cy="278" r="5" fill="#8ba27c"/>
+  <path d="M100 83v16m-8-8h16M350 228v12m-6-6h12" stroke="#8ca17d" stroke-width="2" stroke-linecap="round"/>
+</svg>
