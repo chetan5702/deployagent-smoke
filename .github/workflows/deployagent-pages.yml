@@ -1,0 +1,73 @@
+# Managed by DeployAgent AI. Free public static sites only.
+# DeployAgent template: v2
+name: DeployAgent Pages
+run-name: "DeployAgent ${{ inputs.deployment_id }}"
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        required: true
+        type: string
+      deployment_id:
+        required: true
+        type: string
+permissions: {}
+concurrency:
+  group: deployagent-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Confirm public repository and pinned source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq .visibility)" = public
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+      - name: Install locked dependencies
+        working-directory: .
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build static application
+        working-directory: .
+        run: npm run build -- --base '/deployagent-smoke/' --outDir dist
+      - name: Validate output and mark this deployment
+        working-directory: .
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          DEPLOYMENT_ID: ${{ inputs.deployment_id }}
+        run: |
+          test -f dist/index.html
+          test ! -f dist/CNAME
+          test -z "$(find dist -type l -print -quit)"
+          test "$(du -sb dist | cut -f1)" -lt 104857600
+          node -e "require('fs').writeFileSync('dist/deployagent-verification.json', JSON.stringify({sha:process.env.SOURCE_SHA,id:process.env.DEPLOYMENT_ID}))"
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: ./dist
+          retention-days: 1
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        id: publish
